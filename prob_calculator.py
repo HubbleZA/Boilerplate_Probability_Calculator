@@ -1,6 +1,8 @@
 import copy
 import random
 from collections import Counter
+
+
 # Consider using the modules imported above.
 class Hat:
     def __init__(self, **kwargs):
@@ -11,29 +13,29 @@ class Hat:
                 hat.append(i)
                 k += 1
         self.contents = hat
-        print(self.contents)
 
     def draw(self, draws):
         chosenlist = []
-        editlist = copy.deepcopy(self.contents)
         i = 0
         if draws > len(self.contents):
             return self.contents
         while i < draws:
-            pull = random.randint(0, (len(editlist) - 1))
-            chosenlist.append(editlist.pop(pull))
+            pull = random.randint(0, (len(self.contents) - 1))
+            chosenlist.append(self.contents.pop(pull))
             i += 1
         return chosenlist
 
-    '''def __repr__(self):
-        return str(self.data)'''
+    def __repr__(self):
+        return str(self.contents)
 
     def probability(self, balls, draws, experiments):
         times = 0
         exp = 0
         prob = 0
+        uneditlist = copy.deepcopy(self.contents)
         while exp < experiments:
             chosenlist = self.draw(draws)
+            self.contents = copy.deepcopy(uneditlist)
             chosenlist.sort()
             picked = Counter(chosenlist)
             picked = dict(picked)
@@ -43,6 +45,7 @@ class Hat:
             exp += 1
         prob = times / exp
         return prob
+
 
 def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
     prob = Hat.probability(hat, expected_balls, num_balls_drawn, num_experiments)
