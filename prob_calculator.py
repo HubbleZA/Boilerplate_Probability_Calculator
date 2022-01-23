@@ -10,54 +10,40 @@ class Hat:
             while k <= kwargs[i]:
                 hat.append(i)
                 k += 1
-        self.data = hat
+        self.contents = hat
+        print(self.contents)
 
     def draw(self, draws):
-        editlist = copy.deepcopy(self.data)
         chosenlist = []
+        editlist = copy.deepcopy(self.contents)
         i = 0
+        if draws > len(self.contents):
+            return self.contents
         while i < draws:
             pull = random.randint(0, (len(editlist) - 1))
             chosenlist.append(editlist.pop(pull))
-            self.data.pop(pull)
             i += 1
         return chosenlist
 
-    def contents(self):
-        editlist = copy.deepcopy(self.data)
-        print(editlist)
-        return editlist
-
-    def __repr__(self):
-        return str(self.data)
+    '''def __repr__(self):
+        return str(self.data)'''
 
     def probability(self, balls, draws, experiments):
-        editlist = []
-        chosenlist = []
-        exp = 0
         times = 0
-        if draws > len(self.data):
-            prob = 1
-        else:
-            while exp < experiments:
-                editlist = copy.deepcopy(self.data)
-                i = 0
-                while i < draws:
-                    pull = random.randint(0, (len(editlist)-1))
-                    chosenlist.append(editlist.pop(pull))
-                    i += 1
-                chosenlist.sort()
-                picked = Counter(chosenlist)
-                picked = dict(picked)
-                chosenlist = []
-                shared_items = {k: balls[k] for k in balls if k in picked and balls[k] == picked[k]}
-                if shared_items == balls:
-                    times += 1
-                exp += 1
-            prob = times / exp
+        exp = 0
+        prob = 0
+        while exp < experiments:
+            chosenlist = self.draw(draws)
+            chosenlist.sort()
+            picked = Counter(chosenlist)
+            picked = dict(picked)
+            shared_items = {k: balls[k] for k in balls if k in picked and balls[k] <= picked[k]}
+            if shared_items == balls:
+                times += 1
+            exp += 1
+        prob = times / exp
         return prob
 
 def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
     prob = Hat.probability(hat, expected_balls, num_balls_drawn, num_experiments)
-    #print(prob)
     return prob
